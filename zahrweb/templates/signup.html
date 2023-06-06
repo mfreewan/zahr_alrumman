@@ -1,102 +1,16 @@
 <!-- @format -->
+{% extends 'basic.html' %}
 {% load static %}
 
 <head>
   {% block tittle %}
   <title>التسجيل</title>
   {% endblock %}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 </head>
-{% block content %} {% csrf_token %}
-<div class="container">
-  <h1>التسجيل</h1>
-  <p>من فضلك ادخل معلوماتك ثم انقر على زر التسجيل</p>
-  <hr />
-
-  <!-- <label for="username"><b>ادخل اسم المستخدم</b></label>
-      {{form.username}}
-  
-      <label for="email"><b>الايميل</b></label>
-      {{form.email}}
-  
-      <label for="psw"><b>كلمة السر</b></label>
-      {{form.password1}}  
-      <label for="psw-repeat"><b>تأكيد كلمة السر</b></label>
-      {{form.password2}} 
-      <label for="phonenumber"><b>رقم الهاتف</b></label>
-      <input type="number" placeholder="رقم الهاتف" name="psw-repeat" required>
-
-      <label for="familynum"><b>عدد افراد العائلة</b></label>
-      <input type="number" placeholder="عدد افراد العائلة" name="psw-repeat" required>
-
-      <label for="naf"><b>هل أنت مستفيد من المعونة الوطنية ( نعم / لا )</b></label>
-      <div><input type="radio" id="naf" name="naf">
-        <label for="yes">نعم</label>
-      </div>
-      <div><input type="radio" id="naf" name="naf">
-        <label for="no">لا</label>
-      </div>
-  <br>
-  <label for="nation"><b>الجنسية</b></label>
-  <br>
-  <br>
-  <div>
-    
-    <select required>
-        <option>الاردنية</option>
-        <option>السورية</option>
-        <option>الفلسطينية</option>
-        <option>الباكستانية</option>
-        <option>اللبنانية</option>
-    </select>
-   
-</div>
-<br>
-      <label>
-        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
-      </label>
-  
-      <p>بتسجيل معلوماتك في موقع الجمعية فإنك توافق على شروط و بنود التسجيل  <button onclick="terms() " id="terms"><a href="">شروط و بنود التسجيل في جمعية زهر الرمان الخيرية </a></button></p>
-  
-      <div class="clearfix">
-        <button type="rest" class="cancelbtn">الغاء</button>
-       <input type="submit" class="signupbtn" value="Signup" />      </div>
-    </div>
+{% block content %}
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit">Sign up</button>
   </form>
- -->
-
-  <form method="POST" actione="." class="login-form spacer" id="signup-form">
-    {% csrf_token %}
-
-    <div class="signup">
-      <img
-        class="icon input-icon"
-        src="{% static 'icons/profile-user.svg' %}"
-        alt="" />
-      {{form.username}}
-    </div>
-    <div class="input-group">
-      <img
-        class="icon input-icon"
-        src="{% static 'icons/envelope.png' %}"
-        alt="" />
-      {{form.email}}
-    </div>
-    <div class="input-group">
-      <img class="icon input-icon" src="{% static 'icons/key.svg' %}" alt="" />
-      {{form.password1}}
-    </div>
-    <div class="input-group">
-      <img class="icon input-icon" src="{% static 'icons/key.svg' %}" alt="" />
-      {{form.password2}}
-    </div>
-    <div class="input-group">
-      <img class="icon input-icon" src="{% static 'icons/key.svg' %}" alt="" />
-      {{form.phoneNumber}}
-    </div>
-
-    <input type="submit" class="submit" value="Signup" />
-  </form>
-
-  {% endblock %}
 </div>
+{% endblock %}

@@ -19,224 +19,89 @@ import os
 from django.utils import timezone
 
 
-# def get_static_path(instance, filename):
-#     return os.path.join(settings.STATIC_ROOT, filename)
+# Add permission to User model
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError("The Username field must be set")
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-# Create a new group object
-# custom_group = Group(name="Custom Group")
-# custom_group.save()
-# from django.contrib.auth.models import Group
-
-# group_name = "Custom Group"
-
-# try:
-#     # Try to create a new group with this name
-#     custom_group = Group.objects.create(name=group_name)
-# except IntegrityError:
-#     # If the group name already exists, delete it first
-#     existing_group = Group.objects.get(name=group_name)
-#     existing_group.delete()
-#     custom_group = Group.objects.create(name=group_name)
-
-# Add permissions to the custom group
-# custom_group.permissions.add(
-#     Permission.objects.get(codename="add_customuser"),
-#     Permission.objects.get(codename="change_customuser"),
-#     Permission.objects.get(codename="delete_customuser"),
-# )
-
-
-# class CustomUser(AbstractUser, PermissionsMixin):
-#     # user_permissions = models.ManyToManyField(
-#     #     Permission,
-#     #     verbose_name=_("user permissions"),
-#     #     blank=True,
-#     #     related_name="user_permissions_set",
-#     #     help_text=_("Specific permissions for this user."),
-#     #     through="zahrweb_customuser_user_permissions",
-#     # )
-
-#     number_validator = RegexValidator(
-#         regex=r"^\d{10}$",  # Phone number format: +1234567890 or 1234567890
-#         message="Phone number must contain 10 digits",
-#     )
-#     is_naf = models.BooleanField(default=False)
-#     is_teacher = models.BooleanField(default=False)
-#     mailing_address = models.CharField(max_length=200, blank=True)
-#     phoneNumber = models.CharField(
-#         max_length=200,
-#         blank=True,
-#         validators=[number_validator],
-#     )
-#     RegisterDate = models.DateField(null=True, blank=True)
-#     FamilyNumbers = models.IntegerField(
-#         help_text="number of family numbers ", default=0
-#     )
-#     NationalNumber = models.CharField(
-#         validators=[number_validator],
-#         max_length=10,
-#         help_text="Enter a user National Number",
-#         null=True,
-#         blank=True,
-#     )
-#     nationality = models.CharField(max_length=50, verbose_name="Nationality")
-
-#     # fields here
-
-
-# from django.db import models
-# from django.contrib.auth.models import (
-#     AbstractBaseUser,
-#     PermissionsMixin,
-#     BaseUserManager,
-# )
-
-
-# class MyUserManager(BaseUserManager):
-#     def create_user(self, email, password=None, **extra_fields):
-#         if not email:
-#             raise ValueError("The Email field must be set")
-#         email = self.normalize_email(email)
-#         user = self.model(email=email, **extra_fields)
-#         user.set_password(password)
-#         user.save()
-#         return user
-
-#     def create_superuser(self, email, password=None, **extra_fields):
-#         extra_fields.setdefault("is_staff", True)
-#         extra_fields.setdefault("is_superuser", True)
-
-#         if extra_fields.get("is_staff") is not True:
-#             raise ValueError("Superuser must have is_staff=True.")
-#         if extra_fields.get("is_superuser") is not True:
-#             raise ValueError("Superuser must have is_superuser=True.")
-
-#         return self.create_user(email, password, **extra_fields)
-
-
-# class User(AbstractBaseUser, PermissionsMixin):
-#     email = models.EmailField(unique=True)
-#     first_name = models.CharField(max_length=30)
-#     last_name = models.CharField(max_length=30)
-#     is_active = models.BooleanField(default=True)
-#     is_staff = models.BooleanField(default=False)
-
-#     objects = MyUserManager()
-
-#     USERNAME_FIELD = "email"
-#     REQUIRED_FIELDS = ["first_name", "last_name"]
-
-
-# class CustomGroup(models.Model):
-#     name = models.CharField(max_length=80, unique=True)
-#     description = models.CharField(max_length=255, blank=True)
-#     members = models.ManyToManyField(User)
-
-#     class Meta:
-#         verbose_name = "Custom Group"
-#         verbose_name_plural = "Custom Groups"
-
-#     def __str__(self):
-#         return self.name
-
-
-# class CustomGroup(models.Model):
-#     users = models.ManyToManyField(
-#         CustomUser, through="CustomMembership", related_name="groups"
-#     )
-
-
-# class CustomMembership(models.Model):
-#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-#     group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE)
-#     date_joined = models.DateField(auto_now_add=True)
-
-# class Meta:
-#     db_table = "auth_user"  # <-- you can change me
-
-
-# Create your models here.
-
-# class User(AbstractUser):
-#     age = models.IntegerField(default=0)
-
-# from django.contrib.admin.models import LogEntry
-# from django.db import models
-# from django.utils.translation import gettext_lazy as _
-# from django.contrib.auth import get_user_model
-
-# User = get_user_model()
-
-
-# class CustomLogEntry(LogEntry):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         verbose_name=_("user"),
-#         related_name="log_entries",
-#     )
-
-#     class Meta:
-#         verbose_name = _("log entry")
-#         verbose_name_plural = _("log entries")
-
-#     def __str__(self):
-#         return str(self.object_repr)
-
-
-# class UserFiledsMixin:
-#     age = models.IntegerField(default=0)
-
-
-# class CustomUser(AbstractUser, UserFiledsMixin):
-#     pass
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        # extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, password, **extra_fields)
 
 
 ## create a model for the user  will contain users info
-# class User(AbstractUser):
-#     username = models.CharField(max_length=20, unique=True)
-#     number_validator = RegexValidator(
-#         regex=r"^\d{10}$",  # Phone number format: +1234567890 or 1234567890
-#         message="Phone number must contain 10 digits",
-#     )
+class User(AbstractBaseUser, PermissionsMixin):
+    number_validator = RegexValidator(
+        regex=r"^\d{10}$",  # Phone number format: +1234567890 or 1234567890
+        message="Phone number must contain 10 digits",
+    )
 
-#     MiddleName = models.EmailField(
-#         max_length=200, help_text="Enter a user middle name", null=False, blank=False
-#     )
-#     NationalNumber = models.CharField(
-#         validators=[number_validator],
-#         max_length=10,
-#         help_text="Enter a user National Number",
-#         null=False,
-#         blank=False,
-#     )
-#     PhoneNumber = models.CharField(
-#         validators=[number_validator],
-#         max_length=10,
-#         blank=True,
-#         help_text="enter phone number",
-#     )  # validators should be a list
+    username = models.CharField(
+        help_text="enter user name ", max_length=20, unique=True
+    )
+    email = models.EmailField(help_text="enter your email", blank=True)
+    first_name = models.CharField(
+        help_text="enter your first name", max_length=30, blank=True
+    )
+    MiddleName = models.CharField(
+        max_length=200, help_text="Enter a user middle name", null=True, blank=True
+    )
+    last_name = models.CharField(
+        help_text="enter your last name", max_length=30, blank=True
+    )
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    phoneNumber = models.CharField(
+        help_text="enter your phone number",
+        max_length=20,
+        blank=True,
+        validators=[number_validator],
+    )
+    mailing_address = models.CharField(max_length=200, blank=True)
+    is_superuser = models.BooleanField(default=False)
 
-#     RegisterDate = models.DateField(null=False, blank=False)
-#     FamilyNumbers = models.IntegerField(
-#         help_text="number of family numbers ", default=0
-#     )
-#     NAF = models.BooleanField(default=False)
-#     REQUIRED_FIELDS = [
-#         "email",
-#         "MiddleName ",
-#         "NationalNumber",
-#         "PhoneNumber",
-#     ]
-#     USERNAME_FIELD = "username"
+    NationalNumber = models.CharField(
+        validators=[number_validator],
+        max_length=10,
+        help_text="Enter a user National Number",
+        null=False,
+        blank=False,
+    )
+    RegisterDate = models.DateField(null=True, blank=True)
+    FamilyNumbers = models.IntegerField(
+        help_text="number of family numbers ", default=0
+    )
+    NAF = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return self.NationalNumber
+    REQUIRED_FIELDS = [
+        "email",
+        "MiddleName ",
+        "NationalNumber",
+        "PhoneNumber",
+    ]
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
+
+    def __str__(self):
+        return self.username
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
 
 
 ## Create a model for cash donation information
-
-
 class CashDonation(models.Model):
     Name = models.CharField(max_length=100, help_text="Name of cash donation")
     Email = models.EmailField(
@@ -254,8 +119,6 @@ class CashDonation(models.Model):
 
 
 ## Create a model for in_kind_donation information
-
-
 class InKindDonation(models.Model):
     Name = models.CharField(max_length=100, help_text="Name of in kind donation ")
     Email = models.EmailField(
@@ -272,10 +135,13 @@ class InKindDonation(models.Model):
 
 
 ## Create a model for events
-
-
 class Events(models.Model):
     NameOfEvent = models.CharField(max_length=100, help_text="Name of Event")
+    Image = models.ImageField(
+        upload_to="static/",
+        help_text="Image Poster for news ",
+        default="default_image.jpg",
+    )
     Location = models.CharField(max_length=100, help_text="Location of event")
     DateTimeOFEvent = models.DateTimeField(
         max_length=100, help_text="Date and time of event"
@@ -288,8 +154,6 @@ class Events(models.Model):
 
 
 ##Create a model for news
-
-
 class News(models.Model):
     Title = models.CharField(max_length=100, help_text="Title of news")
     Image = models.ImageField(upload_to="static/", help_text="Image Poster for news ")
@@ -312,8 +176,6 @@ class poster(models.Model):
 
 
 # create a model that contain number of achivment in the year
-
-
 class Achivment(models.Model):
     Test = models.CharField(default=0, blank=True)
     FamilyAidNumber = models.IntegerField(default=0, help_text="Number of family aids ")
@@ -331,8 +193,6 @@ class Achivment(models.Model):
 
 
 # create a model that contain currently existing projects info
-
-
 class ExistingProjects(models.Model):
     # Image = models.ImageField(max_length=400, help_text="project poster image ")
     Image = models.ImageField(help_text="project poster image")
@@ -347,8 +207,6 @@ class ExistingProjects(models.Model):
 
 
 # Create a model that contains details and about of charitable assosiation info
-
-
 class About(models.Model):
     About = models.TextField(
         max_length=100000, help_text="About charitable assosiation "
@@ -363,14 +221,19 @@ class About(models.Model):
 
 #  Create a model that contains volunteering details
 class Volunteer(models.Model):
-    # UserName = models.ForeignKey(
-    #     CustomUser,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     help_text="Select a user name for the volunteer ",
-    # )
+    username = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        help_text="Select a user name for the volunteer ",
+    )
+    volunteersCHOICES = (
+        ("Computer", "Computer"),
+        ("Projects", "Projects"),
+        ("Education", "Education"),
+    )
     field_of_volunteers = models.CharField(
-        max_length=100, help_text="type or field of voulnteer"
+        choices=volunteersCHOICES, help_text="type or field of voulnteer"
     )
     RegisterDate = models.DateField(help_text="Date of registration")
 
@@ -396,6 +259,7 @@ class Idea(models.Model):
         return self.name
 
 
+# this model contain fields for achivments years and numbers
 class number(models.Model):
     year = models.IntegerField(default=0)
     home_project = models.IntegerField(default=0)

@@ -648,6 +648,8 @@ h3 {
 /* Bordered form */
 form {
     border: 3px solid #f1f1f1;
+    text-align: rtl;
+    align-items: center;
 }
 
 /* Full-width inputs */
@@ -1019,6 +1021,7 @@ button[type=submit]:hover {
 }
 
 /* Custom styles for slick carousel */
+
 .slick-dots {
     bottom: 20px;
     /* Position of dots */

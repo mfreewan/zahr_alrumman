@@ -7,8 +7,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("", views.index, name="index"),
     path("about", views.my_view, name="about"),
-    # path("signup/", views.signup, name="signup"),
+    path("signup/", views.signup, name="signup"),
     path("news_detail/<int:primary_key>", views.detail, name="news_detail"),
+    path("event_detail/<int:primary_key>", views.event_detail, name="events_detail"),
     path(
         "project_detail/<int:primary_key>", views.project_detail, name="project_detail"
     ),
@@ -16,6 +17,7 @@ urlpatterns = [
     path("cashdonation/", views.Cash_donation, name="cashdonation"),
     path("idea/", views.Idea, name="idea"),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("create/", views.volunteer_create, name="volunteer"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

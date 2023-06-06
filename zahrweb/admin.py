@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
+
+# from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
@@ -15,10 +16,71 @@ from .models import (
     ExistingProjects,
     About,
     number,
-    # CustomUser,
+    User,
 )
 
+
 # Register your models here.
+class CustomUserAdmin(UserAdmin):
+    model = User
+    list_display = [
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "is_active",
+        "phoneNumber",
+    ]
+    list_filter = ["is_staff", "is_active"]
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "NationalNumber",
+                    "phoneNumber",
+                    "MiddleName",
+                    "RegisterDate",
+                    "FamilyNumbers",
+                    "NAF",
+                )
+            },
+        ),
+        ("Permissions", {"fields": ("is_active", "is_staff")}),
+        # ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                    "NationalNumber",
+                    "phoneNumber",
+                    "MiddleName",
+                    "RegisterDate",
+                    "FamilyNumbers",
+                    "NAF",
+                ),
+            },
+        ),
+    )
+    search_fields = ("username", "email", "first_name", "last_name")
+    ordering = ("username",)
+
+
+admin.site.register(User, CustomUserAdmin)
 
 
 class NewsAdmin(admin.ModelAdmin):
@@ -68,6 +130,10 @@ class numberadmin(admin.ModelAdmin):
     pass
 
 
+class VolunteerAdmin(admin.ModelAdmin):
+    pass
+
+
 # admin.site.register(Volunteer, VolunteersAdmin)
 admin.site.register(ExistingProjects, ExistingProjectsAdmin)
 admin.site.register(InKindDonation, InKindDonationAdmin)
@@ -78,6 +144,7 @@ admin.site.register(About, AboutAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Achivment, NumberOfAchivmentAdmin)
 admin.site.register(number, numberadmin)
+admin.site.register(Volunteer, VolunteerAdmin)
 
 
 # class CustomUserAdmin(UserAdmin):

@@ -70,13 +70,19 @@
           <ion-icon name="logo-instagram"></ion-icon>
         </a></li>
     </ul>
+    {% if user.is_authenticated %}
     <ul class="menu">
-      <li class="menu__item"><a class="menu__link" href="Home.html">الصفحة الرئيسية</a></li>
-      <li class="menu__item"><a class="menu__link" href="about.html">عن الجمعية </a></li>
-      <li class="menu__item"><a class="menu__link" href="sign up.html">التسجيل </a></li>
-      <li class="menu__item"><a class="menu__link" href="login.html">الدخول </a></li>
+      <li class="menu__item"><a class="menu__link" href="{% url 'index' %}">الصفحة الرئيسية</a></li>
+      <li class="menu__item"><a class="menu__link" href="{% url 'about' %}">عن الجمعية </a></li>
+      <a href="{% url 'logout' %}?next={{ request.path }}">الخروج</a>
+      <a>اهلا بك: {{ user.get_username }}</a>
+      {% else %}
+      <li class="menu__item"><a class="menu__link" href="{% url 'index' %}">الصفحة الرئيسية</a></li>
+      <li class="menu__item"><a class="menu__link" href="{% url 'about' %}">عن الجمعية </a></li>
+      <li class="menu__item"><a class="menu__link" href="{% url 'signup' %}">التسجيل </a></li>
+      <li class="menu__item"><a class="menu__link" href="{% url 'login' %}">الدخول </a></li>
       <li class="menu__item"><a class="menu__link" href="m.freewan@outlook.sa">تواصل معنا </a></li>
-
+      {% endif %}
     </ul>
     <p>&copy;2022 Mohammed Freewan | All Rights Reserved</p>
   </footer>

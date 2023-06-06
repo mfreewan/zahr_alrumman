@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "zahrweb",
 ]
-AUTH_USER_MODEL = "zahr_alrumman.User"
-AUTH_GROUP_MODEL = "zahr_alrumman.CustomGroup"
+AUTH_USER_MODEL = "zahrweb.User"
+AUTH_GROUP_MODEL = "zahrweb.CustomGroup"
 
 
 MIDDLEWARE = [
@@ -91,7 +91,7 @@ DATABASES = {
         "USER": "freewan",
         "PASSWORD": "m25510",
         "HOST": "127.0.0.1",
-        "PORT": "5434",
+        "PORT": "5432",
     }
 }
 

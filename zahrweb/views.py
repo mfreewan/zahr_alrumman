@@ -9,6 +9,7 @@ from .models import (
     Achivment,
     ExistingProjects,
     About,
+    number,
 )
 from audioop import reverse
 from datetime import datetime
@@ -22,20 +23,23 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 def index(request):
     posters = poster.objects.all().order_by("-id")[:5]
     news = News.objects.order_by("-date")[:3]
-    number_of_achivments = Achivment.objects.all()
+    number_of_achivments = number.objects.all()
     active_projects = ExistingProjects.objects.order_by("-start_date")[:3]
+    events = Events.objects.all()
 
     context = {
         "poster_image": posters,
         "news": news,
         "number_of_achivments": number_of_achivments,
         "active_projects": active_projects,
+        "events": events,
     }
 
     return render(request, "index.html", context=context)
@@ -45,6 +49,12 @@ def detail(request, primary_key):
     news = News.objects.get(pk=primary_key)
     context = {"news": news}
     return render(request, "news_detail.html", context)
+
+
+def event_detail(request, primary_key):
+    events = Events.objects.get(pk=primary_key)
+    context = {"event": events}
+    return render(request, "event_detail.html", context)
 
 
 def project_detail(request, primary_key):
@@ -131,49 +141,43 @@ class NewsDetailView(generic.DetailView):
         return render(request, context={"news": news})
 
 
+class EventDetailView(generic.DetailView):
+    model = Events
+    template_name = "zahrweb/event_detail.html"
+
+    def Event_detail_view(request, primary_key):
+        try:
+            event = Events.objects.get(pk=primary_key)
+        except Events.DoesNotExist:
+            raise Http404("News does not exist")
+
+        return render(request, context={"event": event})
+
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 
-# from .forms import SignUpForm
+from .forms import SignupForm
 
 
-# def signup(request):
-#     form = UserCreationForm(request.POST)
-#     form = SignUpForm(request.POST)
+def signup(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect("index")
+    else:
+        form = SignupForm()
 
-#     if form.is_valid():
-#         form.save()
-#         username = form.cleaned_data.get("username")
-#         password = form.cleaned_data.get("password")
-#         user = authenticate(username=username, password=password)
-#         login(request, user)
-#         return redirect("index")
-#     context = {"form": form}
-#     return render(request, "signup.html", context)
-# views.py
+    return render(request, "signup.html", {"form": form})
+
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 
 
-def signup(request):
-    pass
-    # if request.method == "POST":
-    #     form = SignUpForm(request.POST)
-    #     if form.is_valid():
-    #         user = form.save()
-    #         # Log the user in.
-    #         username = form.cleaned_data.get("username")
-    #         password = form.cleaned_data.get("password1")
-    #         user = authenticate(username=username, password=password)
-    #         login(request, user)
-    #         return redirect("index")
-    # else:
-    #     form = SignUpForm()
-    # return render(request, "signup.html", {"form": form})
-
-
-from .forms import InKindDonationForm, CashDonationForm, IdeaForm
+from .forms import InKindDonationForm, CashDonationForm, IdeaForm, VolunteerForm
 
 
 def in_kind_donation(request):
@@ -210,3 +214,17 @@ def Idea(request):
     else:
         form = IdeaForm()
     return render(request, "idea.html", {"form": form})
+
+
+@login_required
+def volunteer_create(request):
+    if request.method == "POST":
+        form = VolunteerForm(request.POST)
+        if form.is_valid():
+            volunteer = form.save(commit=False)
+            volunteer.username = request.user
+            volunteer.save()
+            return redirect("volunteer_success")
+    else:
+        form = VolunteerForm()
+    return render(request, "volunteer_form.html", {"form": form})
